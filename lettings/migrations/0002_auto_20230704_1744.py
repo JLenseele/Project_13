@@ -24,8 +24,9 @@ def datamigrations(apps, schema_editor):
 
     NewLetting = apps.get_model('lettings', 'Letting')
     NewLetting.objects.bulk_create(
-        NewLetting(title=old_object.title,
-                   address_id=old_object.address_id)
+        NewLetting(
+            title=old_object.title,
+            address_id=old_object.address_id)
         for old_object in OldLetting.objects.all()
     )
 
@@ -37,6 +38,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(datamigrations, migrations.RunPython.noop),
+        migrations.RunPython(datamigrations),
     ]
 
