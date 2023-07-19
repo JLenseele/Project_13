@@ -4,6 +4,7 @@ from django.test import Client
 from profiles.models import Profile
 from django.contrib.auth.models import User
 from pytest_django.asserts import assertTemplateUsed
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class TestProfileIndexView:
@@ -76,10 +77,11 @@ class TestProfileView:
         )
 
         try:
-            path = reverse('profile', kwargs={'username': user['username']})
+            path = reverse('profile', kwargs={'username': "PDumoulin"})
             response = client.get(path)
-            content = response.content.decode()
-        except:
+        except ObjectDoesNotExist:
             path = None
+            response = None
 
         assert path is None
+        assert response is None

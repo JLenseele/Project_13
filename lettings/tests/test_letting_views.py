@@ -3,6 +3,7 @@ from django.urls import reverse, resolve
 from django.test import Client
 from lettings.models import Address, Letting
 from pytest_django.asserts import assertTemplateUsed
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class TestLettingView:
@@ -80,8 +81,9 @@ class TestIndexView:
         try:
             path = reverse('letting', kwargs={'letting_id': 2})
             response = client.get(path)
-            content = response.content.decode()
-        except:
+        except ObjectDoesNotExist:
             path = None
+            response = None
 
         assert path is None
+        assert response is None
