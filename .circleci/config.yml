@@ -47,22 +47,11 @@ jobs:
           name: push Docker image
           command: docker push $DOCKERHUB_USERNAME/oc-lettings-site:$CIRCLE_SHA1
 
-  deploy:
-    executor: heroku/default
-    steps:
-      - attach_workspace:
-          at: ~/project
-      - heroku/deploy-via-git:
-          force: true
-
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   build_test_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-and-test
-      - deploy:
+      - build-image_dockerhub:
           requires:
             - build-and-test
