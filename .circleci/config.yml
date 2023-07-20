@@ -55,7 +55,7 @@ jobs:
           command: docker push $DH_username/oc_lettings_docker_build:latest
 
 workflows:
-  build_test_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
+  test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-and-test
@@ -63,5 +63,6 @@ workflows:
           requires:
             - build-and-test
       - push-image-dockerhub:
+          context: OCP13_context
           requires:
             - build-docker-image
