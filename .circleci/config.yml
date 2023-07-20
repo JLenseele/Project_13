@@ -27,7 +27,7 @@ jobs:
           name: Linting
           command: flake8
 
-  build-image_dockerhub:
+  build-docker-image:
     docker:
       - image: cimg/python:3.10.2
     steps:
@@ -35,23 +35,33 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
-          name: Build Docker image
-          command: docker build -t docker-oc-lettings:0.1 .
+          name: Build
+          command: docker build -t oc_lettings_docker_build .
+  push-image-dockerhub:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Login to DockerHub
-          command: docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
+          command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
-          command: docker tag docker-oc-lettings:0.1 $DOCKERHUB_USERNAME/oc-lettings-site:$CIRCLE_SHA1
+          command: docker tag oc_lettings_docker_build $DH_username/oc-lettings-site:latest
       - run:
           name: push Docker image
-          command: docker push $DOCKERHUB_USERNAME/oc-lettings-site:$CIRCLE_SHA1
+          command: docker push $DH_username/oc_lettings_docker_build:latest
 
 workflows:
   build_test_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-and-test
-      - build-image_dockerhub:
+      - build-docker-image:
           requires:
             - build-and-test
+      - push-image-dockerhub:
+          requires:
+            - build-docker-image
