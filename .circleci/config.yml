@@ -49,7 +49,7 @@ jobs:
           command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
-          command: docker tag oc_lettings_docker_build $DH_username/oc-lettings-site:latest
+          command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:latest
       - run:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
