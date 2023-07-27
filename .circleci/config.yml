@@ -3,7 +3,7 @@ version: 2.1
 # See: https://circleci.com/docs/orb-intro/
 orbs:
   python: circleci/python@2.1.1
-  heroku: circleci/heroku@2.0.0
+  aws-ecr: circleci/aws-ecr@8.2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -47,6 +47,20 @@ jobs:
       - run:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
+  push-image-aws-ecr:
+    machine: True
+    steps:
+      - checkout
+      - run:
+          name: Setup AWS ECR
+          command: aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin $AWS_REPO_URL
+      - run:
+          name: Tag Docker image to AWS ECR
+          command: docker tag oc_lettings_docker_build:latest $AWS_REPO_URL/oc-lettings:latest
+      - run:
+          name: Push image to AWS
+          command: docker push $AWS_REPO_URL/oc-lettings:latest
+
 workflows:
   test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
@@ -56,6 +70,12 @@ workflows:
           requires:
             - build-and-test
       - push-image-dockerhub:
+          filters:
+            branches:
+              only: main
           context: OCP13_context
           requires:
             - build-docker-image
+      - push-image-aws-ecr:
+          requires:
+            - push-image-dockerhub
