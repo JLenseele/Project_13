@@ -6,7 +6,7 @@ version: 2.1
 # See: https://circleci.com/docs/orb-intro/
 orbs:
   python: circleci/python@2.1.1
-  heroku: circleci/heroku@2.0.0
+  aws-ecr: circleci/aws-ecr@8.2.1
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
@@ -32,16 +32,23 @@ jobs:
       - image: cimg/python:3.10.2
     steps:
       - checkout
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Build
           command: docker build -t oc_lettings_docker_build .
+
   push-image-dockerhub:
     docker:
       - image: cimg/python:3.10.2
     steps:
       - checkout
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
@@ -53,6 +60,26 @@ jobs:
       - run:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
+
+  deploy-to-aws:
+    executor: aws-ecr/default
+    steps:
+      - checkout
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+      - heroku/install
+
+      run:
+        name: Deploy to Heroku
+        command: |
+          docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
+          docker image pull $DOCKERHUB_USERNAME/oc_lettings:$CIRCLE_SHA1
+          AWS_API_KEY=${HEROKU_API_KEY} heroku container:login
+          docker tag $DOCKERHUB_USERNAME/oc_lettings:$CIRCLE_SHA1 registry.heroku.com/$HEROKU_APP_NAME/web
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          heroku container:release web --app $HEROKU_APP_NAME
+            
 
 workflows:
   test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
