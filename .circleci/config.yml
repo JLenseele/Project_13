@@ -69,16 +69,6 @@ jobs:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
       - heroku/install
-
-      run:
-        name: Deploy to Heroku
-        command: |
-          docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
-          docker image pull $DOCKERHUB_USERNAME/oc_lettings:$CIRCLE_SHA1
-          AWS_API_KEY=${HEROKU_API_KEY} heroku container:login
-          docker tag $DOCKERHUB_USERNAME/oc_lettings:$CIRCLE_SHA1 registry.heroku.com/$HEROKU_APP_NAME/web
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
-          heroku container:release web --app $HEROKU_APP_NAME
             
 
 workflows:
