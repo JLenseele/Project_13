@@ -1,15 +1,8 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/orb-intro/
 orbs:
   python: circleci/python@2.1.1
-  aws-ecr: circleci/aws-ecr@8.2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
 
   build-and-test:
@@ -61,19 +54,8 @@ jobs:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
 
-  deploy-to-aws:
-    executor: aws-ecr/default
-    steps:
-      - checkout
-      - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
-      - heroku/install
-            
-
 workflows:
-  test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  test_linting_build_deploy:
     jobs:
       - build-and-test
       - build-docker-image:
