@@ -1,10 +1,12 @@
 version: 2.1
-
+# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
+# See: https://circleci.com/docs/orb-intro/
 orbs:
   python: circleci/python@2.1.1
-
+  heroku: circleci/heroku@2.0.0
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-
   build-and-test:
     executor: python/default
     docker:
@@ -19,29 +21,21 @@ jobs:
       - run:
           name: Linting
           command: flake8
-
   build-docker-image:
     docker:
       - image: cimg/python:3.10.2
     steps:
       - checkout
-      - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Build
           command: docker build -t oc_lettings_docker_build .
-
   push-image-dockerhub:
     docker:
       - image: cimg/python:3.10.2
     steps:
       - checkout
-      - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
@@ -49,13 +43,14 @@ jobs:
           command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
+          command: docker tag oc_lettings_docker_build $DH_username/oc-lettings-site:latest
           command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:latest
       - run:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
-
 workflows:
-  test_linting_build_deploy:
+  test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-and-test
       - build-docker-image:
