@@ -51,7 +51,7 @@ jobs:
     machine: True
     steps:
       - checkout
-      - - run:
+      - run:
             name: Configure AWS
             command: aws configure
       - run:
