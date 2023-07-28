@@ -51,6 +51,9 @@ jobs:
     machine: True
     steps:
       - checkout
+      - - run:
+            name: Configure AWS
+            command: aws configure
       - run:
           name: Setup AWS ECR
           command: aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin $AWS_REPO_URL
