@@ -47,22 +47,25 @@ jobs:
       - run:
           name: push Docker image
           command: docker push $DH_username/oc_lettings_docker_build:latest
-  push-image-aws-ecr:
-    machine: True
-    steps:
-      - checkout
-      - run:
-            name: Configure AWS
-            command: aws configure
-      - run:
-          name: Setup AWS ECR
-          command: aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin $AWS_REPO_URL
-      - run:
-          name: Tag Docker image to AWS ECR
-          command: docker tag oc_lettings_docker_build:latest $AWS_REPO_URL/oc-lettings:latest
-      - run:
-          name: Push image to AWS
-          command: docker push $AWS_REPO_URL/oc-lettings:latest
+  simple-build-and-push:
+    description: Log into AWS, build and push image to Amazon ECR
+    usage:
+      workflows:
+        build_and_push_image:
+          jobs:
+            - aws-ecr/build-and-push-image:
+                aws-access-key-id: ACCESS_KEY_ID
+                aws-cli-version: latest
+                aws-secret-access-key: SECRET_ACCESS_KEY
+                context: OCP13_context
+                dockerfile: Dockerfile
+                executor: aws-ecr/default
+                no-output-timeout: 20m
+                path: .
+                push-image: true
+                region: eu-west-3
+                registry-id: AWS_ECR_REGISTRY_ID
+                repo: oc-lettings
 
 workflows:
   test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
