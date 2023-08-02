@@ -31,7 +31,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Build
-          command: docker build -t oc_lettings_docker_build .
+          command: docker build -t oc_lettings_docker_build:latest .
 
   push-image-dockerhub:
     docker:
