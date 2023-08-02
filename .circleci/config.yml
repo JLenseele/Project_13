@@ -3,7 +3,6 @@ version: 2.1
 # See: https://circleci.com/docs/orb-intro/
 orbs:
   python: circleci/python@2.1.1
-  aws-ecr: circleci/aws-ecr@8.2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -31,7 +30,9 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Build
-          command: docker build -t oc_lettings_docker_build:latest .
+          command: |
+            docker build -t oc_lettings_docker_build .
+            docker images
 
   push-image-dockerhub:
     docker:
