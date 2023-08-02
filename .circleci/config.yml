@@ -59,6 +59,9 @@ jobs:
             name: Setup Heroku
             command: curl https://cli-assets.heroku.com/install.sh | sh # run a script to set up Heroku
         - run:
+            name: Dyno running
+            command: heroku ps:scale web=1
+        - run:
             name: Build and push Docker image to Heroku
             command: |
               HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
