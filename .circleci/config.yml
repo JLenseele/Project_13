@@ -21,6 +21,7 @@ jobs:
       - run:
           name: Linting
           command: flake8
+
   build-docker-image:
     docker:
       - image: cimg/python:3.10.2
@@ -31,6 +32,7 @@ jobs:
       - run:
           name: Build
           command: docker build -t oc_lettings_docker_build .
+
   push-image-dockerhub:
     docker:
       - image: cimg/python:3.10.2
@@ -43,27 +45,28 @@ jobs:
           command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
-          command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:latest
+          command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
       - run:
           name: push Docker image
-          command: docker push $DH_username/oc_lettings_docker_build:latest
-  push-image-aws-ecr:
-    machine: True
+          command: docker push $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
+
+  push-image-heroku:
+    machine: true
     steps:
-      - checkout
-      - run:
-          name: Configure AWS
-          command: |
-            export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY
-            export AWS_REGION=eu-west-3
-            aws ecr get-login --region ${AWS_REGION}
-      - run:
-          name: Tag Docker image to AWS ECR
-          command: docker tag oc_lettings_docker_build:latest $AWS_REPO_URL/oc-lettings:latest
-      - run:
-          name: Push image to AWS
-          command: docker push $AWS_REPO_URL/oc-lettings:latest
+        - checkout
+        - run:
+            name: Setup Heroku
+            command: curl https://cli-assets.heroku.com/install.sh | sh # run a script to set up Heroku
+        - run:
+            name: Build and push Docker image to Heroku
+            command: |
+              HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
+              HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a $HEROKU_APP_NAME web
+              HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a $HEROKU_APP_NAME web
+        - run:
+            name: Migrate database
+            command: |
+              HEROKU_API_KEY=${HEROKU_API_KEY} heroku run python manage.py migrate -a $HEROKU_APP_NAME
 
 workflows:
   test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
@@ -80,7 +83,7 @@ workflows:
           context: OCP13_context
           requires:
             - build-docker-image
-      - push-image-aws-ecr:
+      - push-image-heroku:
           filters:
             branches:
               only: main
