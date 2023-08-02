@@ -57,7 +57,7 @@ jobs:
         - checkout
         - run:
             name: Setup Heroku
-            command: curl https://cli-assets.heroku.com/install.sh | sh # run a script to set up Heroku
+            command: curl https://cli-assets.heroku.com/install.sh | sh
         - run:
             name: Dyno running
             command: heroku ps:scale web=1 -a $HEROKU_APP_NAME
