@@ -4,7 +4,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
-    dsn="https://8c6ad5336961daacfe16e55336c6963b@o4505674981376000.ingest.sentry.io/4505674986684416",
+    dsn=os.getenv('DNS'),
     integrations=[DjangoIntegration()],
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
