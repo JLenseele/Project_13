@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Build
           command: |
-            docker build -t oc_lettings_docker_build .
+            docker build -t oc_lettings_docker_build:latest .
             docker images
 
   push-image-dockerhub:
