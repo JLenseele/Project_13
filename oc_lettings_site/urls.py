@@ -1,12 +1,14 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include
 from . import views
 
 from django.urls import path
 
-def trigger_error(request):
-    Lenseele_Julien_P13_Sentry = 1
-    Lenseele_Julien_P13_Sentry += 'error'
+
+def trigger_error():
+    lenseele_julien_p13_sentry = 1
+    lenseele_julien_p13_sentry += 'error'
+
 
 urlpatterns = [
     path('', views.index, name='index'),
