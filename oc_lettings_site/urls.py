@@ -5,9 +5,9 @@ from . import views
 from django.urls import path
 
 
-def trigger_error():
-    lenseele_julien_p13_sentry = 1
-    lenseele_julien_p13_sentry += 'error'
+def trigger_error(request):
+    lenseele_julien_p13_sentry = 'error'
+    return int(lenseele_julien_p13_sentry)
 
 
 urlpatterns = [
