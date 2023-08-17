@@ -46,10 +46,10 @@ jobs:
           command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
-          command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
+          command: docker tag oc_lettings_docker_build:latest $DH_username/$DH_repo:$CIRCLE_SHA1
       - run:
           name: push Docker image
-          command: docker push $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
+          command: docker push $DH_username/$DH_repo:$CIRCLE_SHA1
 
   push-image-heroku:
     machine: true

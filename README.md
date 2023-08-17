@@ -75,3 +75,62 @@ Utilisation de PowerShell, comme ci-dessus sauf :
 
 - Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
 - Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
+
+
+## Déploiement
+
+### Configuration de la pipeline CI/CD
+
+#### DockerHub
+
+- Créer un compte <a href="https://hub.docker.com/" target="_blank">Dockerhub</a>
+- Créer un nouveau repository depuis votre dashboard
+
+
+#### Circleci
+
+- Créer un compte <a href="https://circleci.com/" target="_blank">Circleci</a>
+- Configurer votre projet sur Circleci en suivant <a href="https://circleci.com/docs/getting-started/" target="_blank">cette documentation</a>
+
+#### Heroku
+
+- Créer un compte <a href="https://dashboard.heroku.com/apps" target="_blank">Heroku</a>
+- Créer une nouvelle application
+- Récupérer la clé API que vous trouverez dans "account settings > API Key"
+
+#### Sentry
+
+- Créer un compte <a href="https://sentry.io" target="_blank">Sentry</a>
+- Créer un nouveau projet Django, et récupérer la variable **dsn** indiqué
+![sentry.png](..%2F..%2F..%2F..%2FDownloads%2Fsentry.png)
+
+### Variables d'environnements
+
+Afin que toutes ces applications communiquent entre elles correctement, 
+il faut y indiquer des variables d'environnement.
+
+**Par exemple:**  
+La variable `DH_username` qu'il faut renseigner dans **CircleCI**, permet à l'application **CircleCi**
+d'authentifier votre compte **DockerHub**, puis d'envoyer l'image **docker** du projet sur votre repo **DockerHub**.
+
+#### V-E CircleCI
+
+Une fois configuré, aller dans le menu : organization settings ->Contexts -> Create Context  
+- Nommer ce context **OCP13_context**  
+
+Ajouter les variables d'environement dans ce context
+
+- DH_username : Votre nom d'utilisateur DockerHub
+- DH_password : Votre mot de passe DockerHub
+- DH_repo : Le nom du repo DockerHub créé précédemment
+- DNS : la clé dns récupéré précédement sur Sentry
+- HEROKU_API_KEY : la clé API Heroku récupéré precedement
+- HEROKU_APP_NAME : le nom de votre app Heroku
+
+#### V-E Heroku
+
+Ajouter les variables d'environement dans votre projet > settings > config vars
+
+- ENV : "PRODUCTION"
+- SECRET_KEY : secret_key Django
+- DNS : la clé dns récupéré précédement sur Sentry
