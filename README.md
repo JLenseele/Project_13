@@ -134,3 +134,5 @@ Ajouter les variables d'environement dans votre projet > settings > config vars
 - ENV : "PRODUCTION"
 - SECRET_KEY : secret_key Django
 - DNS : la clé dns récupéré précédement sur Sentry
+
+### Déploiement de l'application
