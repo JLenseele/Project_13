@@ -136,3 +136,4 @@ Ajouter les variables d'environement dans votre projet > settings > config vars
 - DNS : la clé dns récupéré précédement sur Sentry
 
 ### Déploiement de l'application
+
