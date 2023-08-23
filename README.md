@@ -143,3 +143,4 @@ incluant plusieurs insctructions:
 - ``build de l'image Docker``  
 - ``upload de l'image sur DockerHub``  
 - ``déploiement de l'image sur Heroku``
+- 
