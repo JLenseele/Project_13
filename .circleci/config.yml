@@ -6,7 +6,7 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  build-and-test:
+  linting-and-test:
     executor: python/default
     docker:
       - image: cimg/python:3.10.2
@@ -73,10 +73,12 @@ workflows:
   test_linting_build_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build-and-test
+      - linting-and-test
       - build-docker-image:
+          filters:            branches:
+              only: main
           requires:
-            - build-and-test
+            - linting-and-test
       - push-image-dockerhub:
           filters:
             branches:
