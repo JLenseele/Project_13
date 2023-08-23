@@ -75,7 +75,8 @@ workflows:
     jobs:
       - linting-and-test
       - build-docker-image:
-          filters:            branches:
+          filters:
+            branches:
               only: main
           requires:
             - linting-and-test
