@@ -18,11 +18,10 @@ Dans le reste de la documentation sur le développement local, il est supposé q
 #### Cloner le repository
 
 - `cd /path/to/put/project/in`
-- `git clone https://github.com/OpenClassrooms-Student-Center/Python-OC-Lettings-FR.git`
+- `git clone https://github.com/JLenseele/Project_13.git`
 
 #### Créer l'environnement virtuel
 
-- `cd /path/to/Python-OC-Lettings-FR`
 - `python -m venv venv`
 - `apt-get install python3-venv` (Si l'étape précédente comporte des erreurs avec un paquet non trouvé sur Ubuntu)
 - Activer l'environnement `source venv/bin/activate`
@@ -34,7 +33,6 @@ Dans le reste de la documentation sur le développement local, il est supposé q
 
 #### Exécuter le site
 
-- `cd /path/to/Python-OC-Lettings-FR`
 - `source venv/bin/activate`
 - `pip install --requirement requirements.txt`
 - `python manage.py runserver`
@@ -43,13 +41,11 @@ Dans le reste de la documentation sur le développement local, il est supposé q
 
 #### Linting
 
-- `cd /path/to/Python-OC-Lettings-FR`
 - `source venv/bin/activate`
 - `flake8`
 
 #### Tests unitaires
 
-- `cd /path/to/Python-OC-Lettings-FR`
 - `source venv/bin/activate`
 - `pytest`
 
@@ -137,4 +133,13 @@ Ajouter les variables d'environement dans votre projet > settings > config vars
 
 ### Déploiement de l'application
 
+Une fois toutes les variables d'environnement configurés, il suffit de commit un changement  
+dans la branche main du projet GitHub.
 
+Cette modification sera pris en compte dans CircleCI, qui éxécutera le script
+`config.yml`  
+incluant plusieurs insctructions:  
+- ``test et linting``    
+- ``build de l'image Docker``  
+- ``upload de l'image sur DockerHub``  
+- ``déploiement de l'image sur Heroku``
