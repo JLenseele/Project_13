@@ -47,7 +47,6 @@ jobs:
       - run:
           name: Link to DockerHub
           command: |
-            docker pull
             docker images
             docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
       - run:
