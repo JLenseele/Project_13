@@ -39,18 +39,17 @@ jobs:
       - image: cimg/python:3.10.2
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Login to DockerHub
           command: docker login -u $DH_username -p $DH_password
       - run:
           name: Link to DockerHub
-          command: |
-            systemctl start docker
-            docker images
-            docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
+          command: docker tag oc_lettings_docker_build:latest $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
       - run:
           name: push Docker image
-          command: sudo docker push $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
+          command: docker push $DH_username/oc_lettings_docker_build:$CIRCLE_SHA1
 
   push-image-heroku:
     machine: true
